@@ -1,10 +1,13 @@
 [build]
   base = "frontend"
-  command = "npm run build"
+  command = "npm run build:netlify"
   publish = "build"
 
 [build.environment]
   NODE_VERSION = "18"
+  CI = "false"
+  GENERATE_SOURCEMAP = "false"
+  DISABLE_ESLINT_PLUGIN = "true"
 
 # Redirect all routes to index.html for React Router
 [[redirects]]
