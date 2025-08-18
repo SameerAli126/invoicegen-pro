@@ -1,7 +1,7 @@
 // API Configuration
 export const API_CONFIG = {
   // Base URL for API calls
-  BASE_URL: process.env.REACT_APP_API_URL || 'http://localhost:5002/api',
+  BASE_URL: process.env.REACT_APP_API_URL || 'http://localhost:5001/api',
   
   // Timeout for API requests (30 seconds)
   TIMEOUT: 30000,
