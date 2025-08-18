@@ -61,10 +61,19 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/invoicege
 
 // Routes
 app.get('/', (req, res) => {
-  res.json({ 
+  res.json({
     message: 'InvoiceGen Pro API',
     version: '1.0.0',
     status: 'running'
+  });
+});
+
+// Health check endpoint for API testing
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
   });
 });
 
