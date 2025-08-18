@@ -9,7 +9,7 @@ interface NavbarProps {
     email: string;
     role: 'free' | 'premium';
   } | null;
-  onLogout?: () => void;
+  onLogout: () => void;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
@@ -93,7 +93,7 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
           {/* User Menu */}
           <div className="flex items-center space-x-4">
             {user ? (
-              <UserDropdown user={user} onLogout={onLogout} />
+              <UserDropdown user={user} onLogout={onLogout || (() => {})} />
             ) : (
               <div className="flex items-center space-x-3">
                 <Link to="/login">
