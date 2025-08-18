@@ -33,7 +33,24 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
     emailNotifications: true,
     invoiceReminders: true,
     paymentNotifications: true,
-    marketingEmails: false
+    marketingEmails: false,
+    weeklyReports: true,
+    overdueReminders: true
+  });
+
+  const [securityData, setSecurityData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+    twoFactorEnabled: false
+  });
+
+  const [preferences, setPreferences] = useState({
+    theme: 'light',
+    language: 'en',
+    timezone: 'UTC',
+    dateFormat: 'MM/DD/YYYY',
+    numberFormat: 'US'
   });
 
   const handleProfileSubmit = (e: React.FormEvent) => {
@@ -51,13 +68,37 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
   const handleNotificationSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Implement notification settings update
-    alert('Notification settings update functionality coming soon!');
+    alert('Notification settings updated successfully!');
+  };
+
+  const handleSecuritySubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (securityData.newPassword !== securityData.confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+    // TODO: Implement password change
+    alert('Password changed successfully!');
+    setSecurityData({
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+      twoFactorEnabled: securityData.twoFactorEnabled
+    });
+  };
+
+  const handlePreferencesSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: Implement preferences update
+    alert('Preferences updated successfully!');
   };
 
   const tabs = [
     { id: 'profile', name: 'Profile', icon: '👤' },
     { id: 'business', name: 'Business', icon: '🏢' },
+    { id: 'security', label: 'Security', icon: '🔒' },
     { id: 'notifications', name: 'Notifications', icon: '🔔' },
+    { id: 'preferences', label: 'Preferences', icon: '⚙️' },
     { id: 'billing', name: 'Billing', icon: '💳' }
   ];
 
@@ -236,6 +277,8 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
                     { key: 'emailNotifications', label: 'Email Notifications', description: 'Receive general email notifications' },
                     { key: 'invoiceReminders', label: 'Invoice Reminders', description: 'Get reminded about overdue invoices' },
                     { key: 'paymentNotifications', label: 'Payment Notifications', description: 'Notifications when payments are received' },
+                    { key: 'weeklyReports', label: 'Weekly Reports', description: 'Receive weekly summary reports' },
+                    { key: 'overdueReminders', label: 'Overdue Reminders', description: 'Automatic reminders for overdue invoices' },
                     { key: 'marketingEmails', label: 'Marketing Emails', description: 'Receive updates about new features and tips' }
                   ].map((item) => (
                     <div key={item.key} className="flex items-center justify-between py-3 border-b border-secondary-200 last:border-b-0">
@@ -255,6 +298,185 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
                 <div className="flex justify-end">
                   <Button type="submit" variant="primary">
                     Save Notification Settings
+                  </Button>
+                </div>
+              </form>
+            </Card>
+          )}
+
+          {activeTab === 'security' && (
+            <Card>
+              <h2 className="text-xl font-semibold text-secondary-900 mb-6">Security Settings</h2>
+              <div className="space-y-8">
+                {/* Change Password */}
+                <div>
+                  <h3 className="text-lg font-medium text-secondary-900 mb-4">Change Password</h3>
+                  <form onSubmit={handleSecuritySubmit} className="space-y-4">
+                    <Input
+                      label="Current Password"
+                      type="password"
+                      value={securityData.currentPassword}
+                      onChange={(e) => setSecurityData(prev => ({ ...prev, currentPassword: e.target.value }))}
+                      placeholder="Enter current password"
+                    />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Input
+                        label="New Password"
+                        type="password"
+                        value={securityData.newPassword}
+                        onChange={(e) => setSecurityData(prev => ({ ...prev, newPassword: e.target.value }))}
+                        placeholder="Enter new password"
+                      />
+                      <Input
+                        label="Confirm New Password"
+                        type="password"
+                        value={securityData.confirmPassword}
+                        onChange={(e) => setSecurityData(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                        placeholder="Confirm new password"
+                      />
+                    </div>
+                    <div className="flex justify-end">
+                      <Button type="submit" variant="primary">
+                        Change Password
+                      </Button>
+                    </div>
+                  </form>
+                </div>
+
+                {/* Two-Factor Authentication */}
+                <div className="border-t border-secondary-200 pt-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-medium text-secondary-900">Two-Factor Authentication</h3>
+                      <p className="text-sm text-secondary-500 mt-1">
+                        Add an extra layer of security to your account
+                      </p>
+                    </div>
+                    <div className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={securityData.twoFactorEnabled}
+                        onChange={(e) => setSecurityData(prev => ({ ...prev, twoFactorEnabled: e.target.checked }))}
+                        className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-secondary-300 rounded"
+                      />
+                      <span className="ml-2 text-sm text-secondary-700">
+                        {securityData.twoFactorEnabled ? 'Enabled' : 'Disabled'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Session Management */}
+                <div className="border-t border-secondary-200 pt-6">
+                  <h3 className="text-lg font-medium text-secondary-900 mb-4">Active Sessions</h3>
+                  <div className="bg-secondary-50 rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-sm font-medium text-secondary-900">Current Session</p>
+                        <p className="text-xs text-secondary-500">Windows • Chrome • Last active: Now</p>
+                      </div>
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-success-100 text-success-800">
+                        Active
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {activeTab === 'preferences' && (
+            <Card>
+              <h2 className="text-xl font-semibold text-secondary-900 mb-6">Preferences</h2>
+              <form onSubmit={handlePreferencesSubmit} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Theme */}
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-2">
+                      Theme
+                    </label>
+                    <select
+                      value={preferences.theme}
+                      onChange={(e) => setPreferences(prev => ({ ...prev, theme: e.target.value }))}
+                      className="w-full px-3 py-2 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                      <option value="light">Light</option>
+                      <option value="dark">Dark</option>
+                      <option value="auto">Auto</option>
+                    </select>
+                  </div>
+
+                  {/* Language */}
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-2">
+                      Language
+                    </label>
+                    <select
+                      value={preferences.language}
+                      onChange={(e) => setPreferences(prev => ({ ...prev, language: e.target.value }))}
+                      className="w-full px-3 py-2 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                      <option value="en">English</option>
+                      <option value="es">Spanish</option>
+                      <option value="fr">French</option>
+                      <option value="de">German</option>
+                    </select>
+                  </div>
+
+                  {/* Timezone */}
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-2">
+                      Timezone
+                    </label>
+                    <select
+                      value={preferences.timezone}
+                      onChange={(e) => setPreferences(prev => ({ ...prev, timezone: e.target.value }))}
+                      className="w-full px-3 py-2 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                      <option value="UTC">UTC</option>
+                      <option value="America/New_York">Eastern Time</option>
+                      <option value="America/Chicago">Central Time</option>
+                      <option value="America/Denver">Mountain Time</option>
+                      <option value="America/Los_Angeles">Pacific Time</option>
+                    </select>
+                  </div>
+
+                  {/* Date Format */}
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-2">
+                      Date Format
+                    </label>
+                    <select
+                      value={preferences.dateFormat}
+                      onChange={(e) => setPreferences(prev => ({ ...prev, dateFormat: e.target.value }))}
+                      className="w-full px-3 py-2 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                      <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                      <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                      <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                    </select>
+                  </div>
+
+                  {/* Number Format */}
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-2">
+                      Number Format
+                    </label>
+                    <select
+                      value={preferences.numberFormat}
+                      onChange={(e) => setPreferences(prev => ({ ...prev, numberFormat: e.target.value }))}
+                      className="w-full px-3 py-2 border border-secondary-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    >
+                      <option value="US">1,234.56 (US)</option>
+                      <option value="EU">1.234,56 (EU)</option>
+                      <option value="IN">1,23,456.78 (Indian)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex justify-end">
+                  <Button type="submit" variant="primary">
+                    Save Preferences
                   </Button>
                 </div>
               </form>

@@ -9,6 +9,7 @@ import Dashboard from './pages/Dashboard';
 import Invoices from './pages/Invoices';
 import Clients from './pages/Clients';
 import Settings from './pages/Settings';
+import Upgrade from './pages/Upgrade';
 import authService, { User } from './services/authService';
 import ApiStatus from './components/Debug/ApiStatus';
 
@@ -188,16 +189,7 @@ function App() {
             path="/upgrade"
             element={
               user ? (
-                <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                  <div className="bg-white rounded-lg shadow p-6">
-                    <h1 className="text-2xl font-bold text-gray-900 mb-4">
-                      Upgrade to Premium
-                    </h1>
-                    <p className="text-gray-600">
-                      Stripe integration coming soon!
-                    </p>
-                  </div>
-                </div>
+                <Upgrade user={user} />
               ) : (
                 <Navigate to="/login" replace />
               )

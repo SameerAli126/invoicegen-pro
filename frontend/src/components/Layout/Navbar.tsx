@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Button from '../UI/Button';
+import UserDropdown from '../UI/UserDropdown';
 
 interface NavbarProps {
   user?: {
@@ -92,30 +93,7 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
           {/* User Menu */}
           <div className="flex items-center space-x-4">
             {user ? (
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                    <span className="text-primary-600 font-medium text-sm">
-                      {user.name.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                  <div className="hidden sm:block">
-                    <p className="text-sm font-medium text-secondary-900">
-                      {user.name}
-                    </p>
-                    <p className="text-xs text-secondary-500 capitalize">
-                      {user.role} Plan
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={onLogout}
-                >
-                  Logout
-                </Button>
-              </div>
+              <UserDropdown user={user} onLogout={onLogout} />
             ) : (
               <div className="flex items-center space-x-3">
                 <Link to="/login">
