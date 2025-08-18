@@ -10,6 +10,7 @@ import Invoices from './pages/Invoices';
 import Clients from './pages/Clients';
 import Settings from './pages/Settings';
 import authService, { User } from './services/authService';
+import ApiStatus from './components/Debug/ApiStatus';
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -218,6 +219,9 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
+
+      {/* API Debug Status - only shows in development */}
+      <ApiStatus />
     </Router>
   );
 }

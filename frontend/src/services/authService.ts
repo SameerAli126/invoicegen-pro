@@ -1,42 +1,5 @@
-import axios from 'axios';
-
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-
-// Create axios instance with default config
-const api = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
-
-// Request interceptor to add auth token
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
-
-// Response interceptor to handle auth errors
-api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Token expired or invalid
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
-    }
-    return Promise.reject(error);
-  }
-);
+import apiClient from '../utils/apiClient';
+import { API_ENDPOINTS } from '../config/api';
 
 export interface User {
   _id: string;
@@ -71,7 +34,7 @@ class AuthService {
   // Register new user
   async register(credentials: RegisterCredentials): Promise<AuthResponse> {
     try {
-      const response = await api.post('/auth/register', credentials);
+      const response = await apiClient.post(API_ENDPOINTS.AUTH.REGISTER, credentials);
       const { token, user } = response.data;
       
       // Store token and user data
@@ -87,7 +50,7 @@ class AuthService {
   // Login user
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
     try {
-      const response = await api.post('/auth/login', credentials);
+      const response = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, credentials);
       const { token, user } = response.data;
       
       // Store token and user data
@@ -131,7 +94,7 @@ class AuthService {
   // Verify token with server
   async verifyToken(): Promise<User> {
     try {
-      const response = await api.get('/auth/verify-token');
+      const response = await apiClient.get(API_ENDPOINTS.AUTH.ME);
       const { user } = response.data;
       
       // Update stored user data
@@ -146,7 +109,7 @@ class AuthService {
   // Get user profile
   async getProfile(): Promise<User> {
     try {
-      const response = await api.get('/auth/profile');
+      const response = await apiClient.get(API_ENDPOINTS.AUTH.ME);
       const { user } = response.data;
       
       // Update stored user data
@@ -161,7 +124,7 @@ class AuthService {
   // Update user profile
   async updateProfile(data: { name: string }): Promise<User> {
     try {
-      const response = await api.put('/auth/profile', data);
+      const response = await apiClient.put(API_ENDPOINTS.AUTH.ME, data);
       const { user } = response.data;
       
       // Update stored user data
@@ -176,7 +139,7 @@ class AuthService {
   // Change password
   async changePassword(data: { currentPassword: string; newPassword: string }): Promise<void> {
     try {
-      await api.put('/auth/change-password', data);
+      await apiClient.put('/auth/change-password', data);
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to change password');
     }
