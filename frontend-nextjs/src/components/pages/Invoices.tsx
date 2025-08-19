@@ -108,7 +108,7 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <div>

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AppProvider, useApp } from '../../components/AppProvider';
 import Navbar from '../../components/Layout/Navbar';
 import Upgrade from '../../components/pages/Upgrade';
+import ChatbotButton from '../../components/AI/ChatbotButton';
 
 function UpgradePage() {
   const { user, loading, logout } = useApp();
@@ -32,6 +33,7 @@ function UpgradePage() {
     <div className="min-h-screen bg-gray-50">
       <Navbar user={user} onLogout={logout} />
       <Upgrade user={user} />
+      <ChatbotButton user={user} />
     </div>
   );
 }

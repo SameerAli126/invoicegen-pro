@@ -83,7 +83,7 @@ const Upgrade: React.FC<UpgradeProps> = ({ user }) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="text-center mb-12">
         <h1 className="text-4xl font-bold text-secondary-900 mb-4">
@@ -151,7 +151,7 @@ const Upgrade: React.FC<UpgradeProps> = ({ user }) => {
       </div>
 
       {/* Pricing Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 mb-8 sm:mb-12">
         {Object.entries(plans).map(([key, plan]) => (
           <Card 
             key={key}

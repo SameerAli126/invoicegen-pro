@@ -56,7 +56,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
         user={user}
       />
 
-      <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto py-4 sm:py-6 px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-secondary-900">
@@ -68,7 +68,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 sm:mb-8">
         {/* Total Invoices */}
         <Card>
           <div className="flex items-center">
@@ -203,7 +203,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
       )}
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
         {/* Recent Activity */}
         <div className="lg:col-span-2">
           <Card>

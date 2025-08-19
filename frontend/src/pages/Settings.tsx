@@ -96,9 +96,9 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
   const tabs = [
     { id: 'profile', name: 'Profile', icon: '👤' },
     { id: 'business', name: 'Business', icon: '🏢' },
-    { id: 'security', label: 'Security', icon: '🔒' },
+    { id: 'security', name: 'Security', icon: '🔒' },
     { id: 'notifications', name: 'Notifications', icon: '🔔' },
-    { id: 'preferences', label: 'Preferences', icon: '⚙️' },
+    { id: 'preferences', name: 'Preferences', icon: '⚙️' },
     { id: 'billing', name: 'Billing', icon: '💳' }
   ];
 

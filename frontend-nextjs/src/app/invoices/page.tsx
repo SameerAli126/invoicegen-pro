@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AppProvider, useApp } from '../../components/AppProvider';
 import Navbar from '../../components/Layout/Navbar';
 import Invoices from '../../components/pages/Invoices';
+import ChatbotButton from '../../components/AI/ChatbotButton';
 
 function InvoicesPage() {
   const { user, loading, logout } = useApp();
@@ -32,6 +33,7 @@ function InvoicesPage() {
     <div className="min-h-screen bg-gray-50">
       <Navbar user={user} onLogout={logout} />
       <Invoices user={user} />
+      <ChatbotButton user={user} />
     </div>
   );
 }

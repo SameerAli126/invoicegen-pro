@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AppProvider, useApp } from '../../components/AppProvider';
 import Navbar from '../../components/Layout/Navbar';
 import Dashboard from '../../components/pages/Dashboard';
+import ChatbotButton from '../../components/AI/ChatbotButton';
 
 function DashboardPage() {
   const { user, loading, logout } = useApp();
@@ -32,6 +33,7 @@ function DashboardPage() {
     <div className="min-h-screen bg-gray-50">
       <Navbar user={user} onLogout={logout} />
       <Dashboard user={user} />
+      <ChatbotButton user={user} />
     </div>
   );
 }
