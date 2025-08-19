@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import Card from '../UI/Card';
 import Button from '../UI/Button';
+import { useToast } from '../UI/ToastContainer';
 import { User } from '../../services/authService';
 
 interface UpgradeProps {
@@ -9,6 +10,7 @@ interface UpgradeProps {
 }
 
 const Upgrade: React.FC<UpgradeProps> = ({ user }) => {
+  const { showInfo } = useToast();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const [selectedPlan, setSelectedPlan] = useState<'starter' | 'professional' | 'enterprise'>('professional');
 
@@ -79,7 +81,7 @@ const Upgrade: React.FC<UpgradeProps> = ({ user }) => {
 
   const handleUpgrade = (planType: keyof typeof plans) => {
     // TODO: Integrate with Stripe
-    alert(`Upgrading to ${plans[planType].name} plan - Stripe integration coming soon!`);
+    showInfo('Coming Soon', `Upgrading to ${plans[planType].name} plan - Stripe integration coming soon!`);
   };
 
   return (

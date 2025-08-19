@@ -4,6 +4,8 @@ import Card from '../UI/Card';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
 import Modal from '../UI/Modal';
+import ConfirmModal from '../UI/ConfirmModal';
+import { useToast } from '../UI/ToastContainer';
 import InvoiceForm from '../Invoice/InvoiceForm';
 import invoiceService, { Invoice } from '../../services/invoiceService';
 import { User } from '../../services/authService';
@@ -13,12 +15,16 @@ interface InvoicesProps {
 }
 
 const Invoices: React.FC<InvoicesProps> = ({ user }) => {
+  const { showSuccess, showError } = useToast();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteInvoiceId, setDeleteInvoiceId] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [pagination, setPagination] = useState({
@@ -61,9 +67,8 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
       await invoiceService.createInvoice(data);
       setShowCreateModal(false);
       loadInvoices(); // Refresh the list
-      
-      // Show success message (you could add a toast notification here)
-      alert('Invoice created successfully!');
+
+      showSuccess('Success', 'Invoice created successfully!');
     } catch (err: any) {
       setCreateError(err.message);
     } finally {
@@ -78,23 +83,33 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
       } else if (action === 'mark-paid') {
         await invoiceService.markAsPaid(invoiceId);
       }
-      
+
       loadInvoices(); // Refresh the list
+      showSuccess('Success', `Invoice ${action.replace('-', ' ')} successfully!`);
     } catch (err: any) {
-      alert(`Failed to ${action.replace('-', ' ')} invoice: ${err.message}`);
+      showError('Error', `Failed to ${action.replace('-', ' ')} invoice: ${err.message}`);
     }
   };
 
   const handleDeleteInvoice = async (invoiceId: string) => {
-    if (!window.confirm('Are you sure you want to delete this invoice?')) {
-      return;
-    }
+    setDeleteInvoiceId(invoiceId);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteInvoice = async () => {
+    if (!deleteInvoiceId) return;
 
     try {
-      await invoiceService.deleteInvoice(invoiceId);
+      setDeleteLoading(true);
+      await invoiceService.deleteInvoice(deleteInvoiceId);
       loadInvoices(); // Refresh the list
+      setShowDeleteModal(false);
+      setDeleteInvoiceId(null);
+      showSuccess('Success', 'Invoice deleted successfully!');
     } catch (err: any) {
-      alert(`Failed to delete invoice: ${err.message}`);
+      showError('Error', `Failed to delete invoice: ${err.message}`);
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -379,6 +394,22 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
           error={createError}
         />
       </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setDeleteInvoiceId(null);
+        }}
+        onConfirm={confirmDeleteInvoice}
+        title="Delete Invoice"
+        message="Are you sure you want to delete this invoice? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+        loading={deleteLoading}
+      />
     </div>
   );
 };

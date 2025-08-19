@@ -3,6 +3,8 @@ import Card from '../UI/Card';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
 import Modal from '../UI/Modal';
+import ConfirmModal from '../UI/ConfirmModal';
+import { useToast } from '../UI/ToastContainer';
 import ClientForm from '../Client/ClientForm';
 import clientService, { Client } from '../../services/clientService';
 import { User } from '../../services/authService';
@@ -12,12 +14,16 @@ interface ClientsProps {
 }
 
 const Clients: React.FC<ClientsProps> = ({ user }) => {
+  const { showSuccess, showError, showInfo } = useToast();
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState('');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteClientId, setDeleteClientId] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [pagination, setPagination] = useState({
@@ -54,13 +60,12 @@ const Clients: React.FC<ClientsProps> = ({ user }) => {
     try {
       setCreateLoading(true);
       setCreateError('');
-      
+
       await clientService.createClient(data);
       setShowCreateModal(false);
       loadClients(); // Refresh the list
-      
-      // Show success message (you could add a toast notification here)
-      alert('Client created successfully!');
+
+      showSuccess('Success', 'Client created successfully!');
     } catch (err: any) {
       setCreateError(err.message);
     } finally {
@@ -69,15 +74,24 @@ const Clients: React.FC<ClientsProps> = ({ user }) => {
   };
 
   const handleDeleteClient = async (clientId: string) => {
-    if (!window.confirm('Are you sure you want to delete this client? This action cannot be undone.')) {
-      return;
-    }
+    setDeleteClientId(clientId);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDeleteClient = async () => {
+    if (!deleteClientId) return;
 
     try {
-      await clientService.deleteClient(clientId);
+      setDeleteLoading(true);
+      await clientService.deleteClient(deleteClientId);
       loadClients(); // Refresh the list
+      setShowDeleteModal(false);
+      setDeleteClientId(null);
+      showSuccess('Success', 'Client deleted successfully!');
     } catch (err: any) {
-      alert(`Failed to delete client: ${err.message}`);
+      showError('Error', `Failed to delete client: ${err.message}`);
+    } finally {
+      setDeleteLoading(false);
     }
   };
 
@@ -254,7 +268,7 @@ const Clients: React.FC<ClientsProps> = ({ user }) => {
                           variant="outline"
                           onClick={() => {
                             // TODO: Implement edit functionality
-                            alert('Edit functionality coming soon!');
+                            showInfo('Coming Soon', 'Edit functionality will be available in the next update!');
                           }}
                         >
                           Edit
@@ -337,6 +351,22 @@ const Clients: React.FC<ClientsProps> = ({ user }) => {
           error={createError}
         />
       </Modal>
+
+      {/* Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setDeleteClientId(null);
+        }}
+        onConfirm={confirmDeleteClient}
+        title="Delete Client"
+        message="Are you sure you want to delete this client? This action cannot be undone and will also delete all associated invoices."
+        confirmText="Delete"
+        cancelText="Cancel"
+        variant="danger"
+        loading={deleteLoading}
+      />
     </div>
   );
 };

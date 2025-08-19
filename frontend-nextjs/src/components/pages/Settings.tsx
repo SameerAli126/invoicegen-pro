@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Card from '../UI/Card';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
+import { useToast } from '../UI/ToastContainer';
 import { User } from '../../services/authService';
 
 interface SettingsProps {
@@ -9,6 +10,7 @@ interface SettingsProps {
 }
 
 const Settings: React.FC<SettingsProps> = ({ user }) => {
+  const { showSuccess, showError, showWarning } = useToast();
   const [activeTab, setActiveTab] = useState('profile');
   const [profileData, setProfileData] = useState({
     name: user.name,
@@ -68,17 +70,17 @@ const Settings: React.FC<SettingsProps> = ({ user }) => {
   const handleNotificationSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // TODO: Implement notification settings update
-    alert('Notification settings updated successfully!');
+    showSuccess('Settings Updated', 'Notification settings updated successfully!');
   };
 
   const handleSecuritySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (securityData.newPassword !== securityData.confirmPassword) {
-      alert('Passwords do not match!');
+      showError('Validation Error', 'Passwords do not match!');
       return;
     }
     // TODO: Implement password change
-    alert('Password changed successfully!');
+    showSuccess('Password Updated', 'Password changed successfully!');
     setSecurityData({
       currentPassword: '',
       newPassword: '',

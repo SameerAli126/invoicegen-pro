@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import authService, { User } from '../services/authService';
+import { ToastProvider } from './UI/ToastContainer';
 
 interface AppContextType {
   user: User | null;
@@ -85,7 +86,9 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   return (
     <AppContext.Provider value={value}>
-      {children}
+      <ToastProvider>
+        {children}
+      </ToastProvider>
     </AppContext.Provider>
   );
 };

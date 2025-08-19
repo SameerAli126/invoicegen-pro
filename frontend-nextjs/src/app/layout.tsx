@@ -1,15 +1,10 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -31,12 +26,14 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "any" }
+      { url: "/favicon.svg", type: "image/svg+xml" }
     ],
     apple: "/apple-touch-icon.png",
   },
   manifest: "/manifest.json",
+};
+
+export const viewport = {
   themeColor: "#3B82F6",
 };
 
@@ -48,7 +45,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 text-gray-900`}
+        className={`${inter.variable} antialiased bg-gray-50 text-gray-900`}
+        style={{ fontFamily: 'var(--font-inter), Inter, system-ui, sans-serif' }}
       >
         {children}
       </body>
