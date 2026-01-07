@@ -29,6 +29,7 @@ interface InvoiceFormData {
 
 interface InvoiceFormProps {
   onSubmit: (data: InvoiceFormData) => Promise<void>;
+  onSaveDraft?: (data: InvoiceFormData) => Promise<void>;
   loading?: boolean;
   error?: string;
   initialData?: Partial<InvoiceFormData>;
@@ -36,6 +37,7 @@ interface InvoiceFormProps {
 
 const InvoiceForm: React.FC<InvoiceFormProps> = ({
   onSubmit,
+  onSaveDraft,
   loading = false,
   error,
   initialData
@@ -173,6 +175,22 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
 
     try {
       await onSubmit(formData);
+    } catch (err) {
+      // Error handling is done by parent component
+    }
+  };
+
+  const handleSaveDraft = async () => {
+    if (!onSaveDraft || loading) {
+      return;
+    }
+
+    if (!validateForm()) {
+      return;
+    }
+
+    try {
+      await onSaveDraft(formData);
     } catch (err) {
       // Error handling is done by parent component
     }
@@ -381,7 +399,12 @@ const InvoiceForm: React.FC<InvoiceFormProps> = ({
 
       {/* Submit Button */}
       <div className="flex justify-end space-x-4">
-        <Button type="button" variant="outline">
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleSaveDraft}
+          disabled={!onSaveDraft || loading}
+        >
           Save as Draft
         </Button>
         <Button type="submit" variant="primary" loading={loading}>

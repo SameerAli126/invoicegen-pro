@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
 
 // Create axios instance with default config
 const api = axios.create({
@@ -319,3 +319,4 @@ class ClientService {
 // Create and export a singleton instance
 const clientService = new ClientService();
 export default clientService;
+

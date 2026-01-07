@@ -13,7 +13,13 @@ function LoginPage() {
 
   useEffect(() => {
     if (!loading && user) {
-      router.push('/dashboard');
+      router.replace('/dashboard');
+      const fallback = setTimeout(() => {
+        if (typeof window !== 'undefined') {
+          window.location.href = '/dashboard';
+        }
+      }, 500);
+      return () => clearTimeout(fallback);
     }
   }, [user, loading, router]);
 
@@ -44,7 +50,11 @@ function LoginPage() {
   }
 
   if (user) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-secondary-700">Redirecting to dashboard…</div>
+      </div>
+    );
   }
 
   return (

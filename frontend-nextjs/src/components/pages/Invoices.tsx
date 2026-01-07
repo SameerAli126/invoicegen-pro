@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Card from '../UI/Card';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
@@ -16,6 +17,8 @@ interface InvoicesProps {
 
 const Invoices: React.FC<InvoicesProps> = ({ user }) => {
   const { showSuccess, showError } = useToast();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -39,6 +42,13 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
     loadInvoices();
   }, [searchTerm, statusFilter, pagination.current]);
 
+  useEffect(() => {
+    if (searchParams.get('new') && !showCreateModal) {
+      setShowCreateModal(true);
+      router.replace('/invoices');
+    }
+  }, [searchParams, showCreateModal, router]);
+
   const loadInvoices = async () => {
     try {
       setLoading(true);
@@ -59,7 +69,7 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
     }
   };
 
-  const handleCreateInvoice = async (data: any) => {
+  const handleCreateInvoice = async (data: any, mode: 'draft' | 'final' = 'final') => {
     try {
       setCreateLoading(true);
       setCreateError('');
@@ -68,7 +78,7 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
       setShowCreateModal(false);
       loadInvoices(); // Refresh the list
 
-      showSuccess('Success', 'Invoice created successfully!');
+      showSuccess('Success', mode === 'draft' ? 'Draft saved successfully!' : 'Invoice created successfully!');
     } catch (err: any) {
       setCreateError(err.message);
     } finally {
@@ -389,7 +399,8 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
         size="xl"
       >
         <InvoiceForm
-          onSubmit={handleCreateInvoice}
+          onSubmit={(data) => handleCreateInvoice(data, 'final')}
+          onSaveDraft={(data) => handleCreateInvoice(data, 'draft')}
           loading={createLoading}
           error={createError}
         />

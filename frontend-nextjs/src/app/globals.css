@@ -15,6 +15,34 @@
   * {
     @apply border-gray-200;
   }
+
+  button,
+  [type='button'],
+  [type='submit'],
+  [type='reset'],
+  [role='button'] {
+    @apply cursor-pointer;
+  }
+
+  input,
+  textarea {
+    @apply cursor-text;
+  }
+
+  select,
+  input[type='file'] {
+    @apply cursor-pointer;
+  }
+
+  button:disabled,
+  [type='button']:disabled,
+  [type='submit']:disabled,
+  [type='reset']:disabled,
+  input:disabled,
+  textarea:disabled,
+  select:disabled {
+    @apply cursor-not-allowed;
+  }
 }
 
 @layer components {

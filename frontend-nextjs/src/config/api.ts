@@ -1,7 +1,7 @@
 // API Configuration
 export const API_CONFIG = {
   // Base URL for API calls
-  BASE_URL: process.env.REACT_APP_API_URL || 'http://localhost:5001/api',
+  BASE_URL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api',
   
   // Timeout for API requests (30 seconds)
   TIMEOUT: 30000,
@@ -18,7 +18,9 @@ export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',
-    ME: '/auth/me',
+    PROFILE: '/auth/profile',
+    VERIFY_TOKEN: '/auth/verify-token',
+    CHANGE_PASSWORD: '/auth/change-password',
     FORGOT_PASSWORD: '/auth/forgot-password',
     RESET_PASSWORD: '/auth/reset-password',
   },
@@ -50,6 +52,7 @@ if (IS_DEVELOPMENT) {
   console.log('🔧 API Configuration:', {
     BASE_URL: API_CONFIG.BASE_URL,
     NODE_ENV: process.env.NODE_ENV,
-    REACT_APP_API_URL: process.env.REACT_APP_API_URL,
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   });
 }
+

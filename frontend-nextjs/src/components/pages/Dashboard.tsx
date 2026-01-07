@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Card from '../UI/Card';
 import Button from '../UI/Button';
 import WelcomeModal from '../Onboarding/WelcomeModal';
@@ -12,6 +13,7 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ user }) => {
+  const router = useRouter();
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [invoiceStats, setInvoiceStats] = useState<InvoiceStats | null>(null);
   const [clientStats, setClientStats] = useState<ClientStats | null>(null);
@@ -19,6 +21,17 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
 
   const usagePercentage = (user.invoiceCount / user.monthlyInvoiceLimit) * 100;
   const canCreateInvoice = user.role === 'premium' || user.invoiceCount < user.monthlyInvoiceLimit;
+
+  const handleNewInvoice = () => {
+    if (!canCreateInvoice) {
+      return;
+    }
+    router.push('/invoices?new=1');
+  };
+
+  const handleAddClient = () => {
+    router.push('/clients?new=1');
+  };
 
   useEffect(() => {
     // Check if user has completed onboarding
@@ -160,6 +173,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
               size="sm" 
               className="w-full"
               disabled={!canCreateInvoice}
+              onClick={handleNewInvoice}
             >
               {canCreateInvoice ? 'New Invoice' : 'Limit Reached'}
             </Button>
@@ -228,7 +242,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
                 <p className="text-secondary-600 mb-4">
                   Create your first invoice to get started with professional billing.
                 </p>
-                <Button variant="primary" disabled={!canCreateInvoice}>
+                <Button variant="primary" disabled={!canCreateInvoice} onClick={handleNewInvoice}>
                   {canCreateInvoice ? 'Create Your First Invoice' : 'Upgrade to Create Invoices'}
                 </Button>
               </div>
@@ -246,13 +260,14 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
                 variant="outline" 
                 className="w-full justify-start"
                 disabled={!canCreateInvoice}
+                onClick={handleNewInvoice}
               >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
                 New Invoice
               </Button>
-              <Button variant="outline" className="w-full justify-start">
+              <Button variant="outline" className="w-full justify-start" onClick={handleAddClient}>
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>

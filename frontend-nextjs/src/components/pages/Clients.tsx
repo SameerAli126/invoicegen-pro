@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Card from '../UI/Card';
 import Button from '../UI/Button';
 import Input from '../UI/Input';
@@ -15,6 +16,8 @@ interface ClientsProps {
 
 const Clients: React.FC<ClientsProps> = ({ user }) => {
   const { showSuccess, showError, showInfo } = useToast();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -35,6 +38,13 @@ const Clients: React.FC<ClientsProps> = ({ user }) => {
   useEffect(() => {
     loadClients();
   }, [searchTerm, statusFilter, pagination.current]);
+
+  useEffect(() => {
+    if (searchParams.get('new') && !showCreateModal) {
+      setShowCreateModal(true);
+      router.replace('/clients');
+    }
+  }, [searchParams, showCreateModal, router]);
 
   const loadClients = async () => {
     try {

@@ -94,7 +94,7 @@ class AuthService {
   // Verify token with server
   async verifyToken(): Promise<User> {
     try {
-      const response = await apiClient.get(API_ENDPOINTS.AUTH.ME);
+      const response = await apiClient.get(API_ENDPOINTS.AUTH.VERIFY_TOKEN);
       const { user } = response.data;
       
       // Update stored user data
@@ -109,7 +109,7 @@ class AuthService {
   // Get user profile
   async getProfile(): Promise<User> {
     try {
-      const response = await apiClient.get(API_ENDPOINTS.AUTH.ME);
+      const response = await apiClient.get(API_ENDPOINTS.AUTH.PROFILE);
       const { user } = response.data;
       
       // Update stored user data
@@ -124,7 +124,7 @@ class AuthService {
   // Update user profile
   async updateProfile(data: { name: string }): Promise<User> {
     try {
-      const response = await apiClient.put(API_ENDPOINTS.AUTH.ME, data);
+      const response = await apiClient.put(API_ENDPOINTS.AUTH.PROFILE, data);
       const { user } = response.data;
       
       // Update stored user data
@@ -139,7 +139,7 @@ class AuthService {
   // Change password
   async changePassword(data: { currentPassword: string; newPassword: string }): Promise<void> {
     try {
-      await apiClient.put('/auth/change-password', data);
+      await apiClient.put(API_ENDPOINTS.AUTH.CHANGE_PASSWORD, data);
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to change password');
     }

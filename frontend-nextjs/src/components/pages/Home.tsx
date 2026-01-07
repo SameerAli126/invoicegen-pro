@@ -2,12 +2,14 @@ import React from 'react';
 import Link from 'next/link';
 import Button from '../UI/Button';
 import Card from '../UI/Card';
+import LandingNavbar from '../Layout/LandingNavbar';
 
 const Home: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-100">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 to-secondary-100" id="top">
+      <LandingNavbar />
       {/* Hero Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-16">
         <div className="text-center">
           <h1 className="text-4xl md:text-6xl font-bold text-secondary-900 mb-6">
             Professional Invoicing
@@ -63,7 +65,7 @@ const Home: React.FC = () => {
       </div>
 
       {/* Features Section */}
-      <div className="bg-white py-16">
+      <div className="bg-white py-16 scroll-mt-24" id="features">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-secondary-900 mb-4">
@@ -157,7 +159,7 @@ const Home: React.FC = () => {
       </div>
 
       {/* Pricing Section */}
-      <div className="bg-secondary-50 py-16">
+      <div className="bg-secondary-50 py-16 scroll-mt-24" id="pricing">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-secondary-900 mb-4">
@@ -270,7 +272,7 @@ const Home: React.FC = () => {
       </div>
 
       {/* CTA Section */}
-      <div className="bg-primary-600 py-16">
+      <div className="bg-primary-600 py-16 scroll-mt-24" id="cta">
         <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Ready to streamline your invoicing?

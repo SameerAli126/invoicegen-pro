@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Link from 'next/link';
 import Modal from '../UI/Modal';
 import Button from '../UI/Button';
 import Card from '../UI/Card';
@@ -192,9 +193,11 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ isOpen, onClose, user }) =>
                 <p className="text-primary-700 text-sm mb-3">
                   Upgrade to Premium for unlimited invoices, custom branding, and automatic reminders.
                 </p>
-                <Button variant="primary" size="sm">
-                  Upgrade to Premium
-                </Button>
+                <Link href="/upgrade" className="inline-block">
+                  <Button variant="primary" size="sm">
+                    Upgrade to Premium
+                  </Button>
+                </Link>
               </div>
             </Card>
           )}

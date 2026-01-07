@@ -182,7 +182,7 @@ clientSchema.methods.updateFinancialStats = async function() {
 // Static method to find clients with outstanding balances
 clientSchema.statics.findWithOutstandingBalance = function(userId) {
   return this.aggregate([
-    { $match: { userId: mongoose.Types.ObjectId(userId), status: 'active' } },
+    { $match: { userId: new mongoose.Types.ObjectId(userId), status: 'active' } },
     { $addFields: { outstandingBalance: { $subtract: ['$totalInvoiced', '$totalPaid'] } } },
     { $match: { outstandingBalance: { $gt: 0 } } },
     { $sort: { outstandingBalance: -1 } }
@@ -192,7 +192,7 @@ clientSchema.statics.findWithOutstandingBalance = function(userId) {
 // Static method to get client statistics for a user
 clientSchema.statics.getUserClientStats = async function(userId) {
   const stats = await this.aggregate([
-    { $match: { userId: mongoose.Types.ObjectId(userId) } },
+    { $match: { userId: new mongoose.Types.ObjectId(userId) } },
     {
       $group: {
         _id: '$status',
