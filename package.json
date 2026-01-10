@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "concurrently -k -n backend,frontend -c green,blue \"npm --prefix backend run dev\" \"cross-env NEXT_DISABLE_SWC_NATIVE=1 npm --prefix frontend-nextjs run dev -- -p 3000\"",
     "dev:backend": "npm --prefix backend run dev",
-    "dev:frontend": "cross-env NEXT_DISABLE_SWC_NATIVE=1 npm --prefix frontend-nextjs run dev -- -p 3000"
+    "dev:frontend": "cross-env NEXT_DISABLE_SWC_NATIVE=1 npm --prefix frontend-nextjs run dev -- -p 3000",
+    "dev:backend:funnel": "tailscale funnel --bg 5001 && npm --prefix backend run dev"
   },
   "devDependencies": {
     "concurrently": "^8.2.2",

@@ -20,18 +20,35 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // CORS configuration
+const normalizeOrigin = (origin) => {
+  if (!origin) {
+    return origin;
+  }
+  return origin.replace(/\/$/, '');
+};
+
+const envOrigins = process.env.FRONTEND_URLS
+  ? process.env.FRONTEND_URLS.split(',').map((origin) => origin.trim())
+  : [];
+
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:3001',
-  process.env.FRONTEND_URL
-].filter(Boolean); // Remove any undefined values
+  process.env.FRONTEND_URL,
+  ...envOrigins
+]
+  .filter(Boolean)
+  .map((origin) => normalizeOrigin(origin));
+
+const allowedOriginSet = new Set(allowedOrigins);
 
 app.use(cors({
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
 
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    const normalizedOrigin = normalizeOrigin(origin);
+    if (allowedOriginSet.has(normalizedOrigin)) {
       callback(null, true);
     } else {
       console.log('CORS blocked origin:', origin);

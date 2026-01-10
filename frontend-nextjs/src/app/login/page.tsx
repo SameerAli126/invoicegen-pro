@@ -6,7 +6,7 @@ import { AppProvider, useApp } from '../../components/AppProvider';
 import Login from '../../components/Auth/Login';
 
 function LoginPage() {
-  const { user, loading, login } = useApp();
+  const { user, loading, login, startDemo } = useApp();
   const router = useRouter();
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState('');
@@ -28,17 +28,19 @@ function LoginPage() {
     setAuthError('');
     
     try {
-      const success = await login(email, password);
-      if (success) {
-        router.push('/dashboard');
-      } else {
-        setAuthError('Invalid email or password');
-      }
+      await login(email, password);
+      router.push('/dashboard');
     } catch (error) {
-      setAuthError('Login failed. Please try again.');
+      const message = error instanceof Error ? error.message : 'Login failed. Please try again.';
+      setAuthError(message);
     } finally {
       setAuthLoading(false);
     }
+  };
+
+  const handleDemo = () => {
+    startDemo();
+    router.push('/dashboard');
   };
 
   if (loading) {
@@ -52,7 +54,7 @@ function LoginPage() {
   if (user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-secondary-700">Redirecting to dashboard…</div>
+        <div className="text-secondary-700">Redirecting to dashboard...</div>
       </div>
     );
   }
@@ -60,6 +62,7 @@ function LoginPage() {
   return (
     <Login
       onLogin={handleLogin}
+      onDemo={handleDemo}
       loading={authLoading}
       error={authError}
     />

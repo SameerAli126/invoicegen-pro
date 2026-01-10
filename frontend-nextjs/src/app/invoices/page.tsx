@@ -8,7 +8,7 @@ import Invoices from '../../components/pages/Invoices';
 import ChatbotButton from '../../components/AI/ChatbotButton';
 
 function InvoicesPage() {
-  const { user, loading, logout } = useApp();
+  const { user, loading, logout, demoMode } = useApp();
   const router = useRouter();
 
   useEffect(() => {
@@ -31,7 +31,7 @@ function InvoicesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar user={user} onLogout={logout} />
+      <Navbar user={user} demoMode={demoMode} onLogout={logout} />
       <Invoices user={user} />
       <ChatbotButton user={user} />
     </div>

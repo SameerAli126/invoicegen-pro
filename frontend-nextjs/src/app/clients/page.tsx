@@ -8,7 +8,7 @@ import Clients from '../../components/pages/Clients';
 import ChatbotButton from '../../components/AI/ChatbotButton';
 
 function ClientsPage() {
-  const { user, loading, logout } = useApp();
+  const { user, loading, logout, demoMode } = useApp();
   const router = useRouter();
 
   useEffect(() => {
@@ -31,7 +31,7 @@ function ClientsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar user={user} onLogout={logout} />
+      <Navbar user={user} demoMode={demoMode} onLogout={logout} />
       <Clients user={user} />
       <ChatbotButton user={user} />
     </div>

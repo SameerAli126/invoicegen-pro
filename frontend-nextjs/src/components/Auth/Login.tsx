@@ -6,11 +6,12 @@ import Card from '../UI/Card';
 
 interface LoginProps {
   onLogin: (email: string, password: string) => Promise<void>;
+  onDemo?: () => void;
   loading?: boolean;
   error?: string;
 }
 
-const Login: React.FC<LoginProps> = ({ onLogin, loading = false, error }) => {
+const Login: React.FC<LoginProps> = ({ onLogin, onDemo, loading = false, error }) => {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -176,6 +177,24 @@ const Login: React.FC<LoginProps> = ({ onLogin, loading = false, error }) => {
             >
               Sign in
             </Button>
+
+            {onDemo && (
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="lg"
+                  className="w-full"
+                  onClick={onDemo}
+                  disabled={loading}
+                >
+                  Try Demo (no backend)
+                </Button>
+                <p className="text-xs text-secondary-500 text-center">
+                  Demo data resets on refresh.
+                </p>
+              </>
+            )}
 
             <div className="text-center">
               <p className="text-sm text-secondary-600">

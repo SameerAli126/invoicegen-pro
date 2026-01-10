@@ -1,5 +1,12 @@
 import apiClient from '../utils/apiClient';
 import { API_ENDPOINTS } from '../config/api';
+import {
+  disableDemo,
+  enableDemo,
+  getDemoUser,
+  isDemoEnabled,
+  updateDemoUser
+} from '../utils/demoStore';
 
 export interface User {
   _id: string;
@@ -17,6 +24,7 @@ export interface AuthResponse {
   message: string;
   token: string;
   user: User;
+  recoveryCode?: string;
 }
 
 export interface LoginCredentials {
@@ -30,7 +38,25 @@ export interface RegisterCredentials {
   password: string;
 }
 
+export interface ResetPasswordPayload {
+  email: string;
+  recoveryCode: string;
+  newPassword: string;
+}
+
 class AuthService {
+  startDemo(): User {
+    return enableDemo();
+  }
+
+  stopDemo(): void {
+    disableDemo();
+  }
+
+  isDemoMode(): boolean {
+    return isDemoEnabled();
+  }
+
   // Register new user
   async register(credentials: RegisterCredentials): Promise<AuthResponse> {
     try {
@@ -65,12 +91,16 @@ class AuthService {
 
   // Logout user
   logout(): void {
+    disableDemo();
     localStorage.removeItem('token');
     localStorage.removeItem('user');
   }
 
   // Get current user from localStorage
   getCurrentUser(): User | null {
+    if (isDemoEnabled()) {
+      return getDemoUser();
+    }
     try {
       const userStr = localStorage.getItem('user');
       return userStr ? JSON.parse(userStr) : null;
@@ -81,11 +111,17 @@ class AuthService {
 
   // Get current token
   getToken(): string | null {
+    if (isDemoEnabled()) {
+      return 'demo-token';
+    }
     return localStorage.getItem('token');
   }
 
   // Check if user is authenticated
   isAuthenticated(): boolean {
+    if (isDemoEnabled()) {
+      return true;
+    }
     const token = this.getToken();
     const user = this.getCurrentUser();
     return !!(token && user);
@@ -93,6 +129,13 @@ class AuthService {
 
   // Verify token with server
   async verifyToken(): Promise<User> {
+    if (isDemoEnabled()) {
+      const user = getDemoUser();
+      if (!user) {
+        throw new Error('Demo session expired');
+      }
+      return user;
+    }
     try {
       const response = await apiClient.get(API_ENDPOINTS.AUTH.VERIFY_TOKEN);
       const { user } = response.data;
@@ -108,6 +151,13 @@ class AuthService {
 
   // Get user profile
   async getProfile(): Promise<User> {
+    if (isDemoEnabled()) {
+      const user = getDemoUser();
+      if (!user) {
+        throw new Error('Demo session expired');
+      }
+      return user;
+    }
     try {
       const response = await apiClient.get(API_ENDPOINTS.AUTH.PROFILE);
       const { user } = response.data;
@@ -123,6 +173,9 @@ class AuthService {
 
   // Update user profile
   async updateProfile(data: { name: string }): Promise<User> {
+    if (isDemoEnabled()) {
+      return updateDemoUser({ name: data.name });
+    }
     try {
       const response = await apiClient.put(API_ENDPOINTS.AUTH.PROFILE, data);
       const { user } = response.data;
@@ -138,10 +191,24 @@ class AuthService {
 
   // Change password
   async changePassword(data: { currentPassword: string; newPassword: string }): Promise<void> {
+    if (isDemoEnabled()) {
+      return;
+    }
     try {
       await apiClient.put(API_ENDPOINTS.AUTH.CHANGE_PASSWORD, data);
     } catch (error: any) {
       throw new Error(error.response?.data?.message || 'Failed to change password');
+    }
+  }
+
+  async resetPassword(data: ResetPasswordPayload): Promise<void> {
+    if (isDemoEnabled()) {
+      throw new Error('Demo mode does not support password reset');
+    }
+    try {
+      await apiClient.post(API_ENDPOINTS.AUTH.RESET_PASSWORD, data);
+    } catch (error: any) {
+      throw new Error(error.response?.data?.message || 'Failed to reset password');
     }
   }
 

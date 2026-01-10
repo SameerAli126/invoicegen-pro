@@ -1,4 +1,15 @@
 import axios from 'axios';
+import {
+  createDemoClient,
+  deleteDemoClient,
+  getDemoClientById,
+  getDemoClients,
+  getDemoClientsRaw,
+  getDemoClientStats,
+  getDemoUser,
+  isDemoEnabled,
+  updateDemoClient
+} from '../utils/demoStore';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
 
@@ -129,6 +140,14 @@ class ClientService {
     status?: string;
     search?: string;
   }): Promise<ClientListResponse> {
+    if (isDemoEnabled()) {
+      const { items, pagination } = getDemoClients(params);
+      return {
+        message: 'Demo clients fetched successfully',
+        clients: items,
+        pagination
+      };
+    }
     try {
       const response = await api.get('/clients', { params });
       return response.data;
@@ -139,6 +158,13 @@ class ClientService {
 
   // Get single client
   async getClient(id: string): Promise<ClientResponse> {
+    if (isDemoEnabled()) {
+      const client = getDemoClientById(id);
+      if (!client) {
+        throw new Error('Demo client not found');
+      }
+      return { message: 'Demo client fetched successfully', client };
+    }
     try {
       const response = await api.get(`/clients/${id}`);
       return response.data;
@@ -149,6 +175,14 @@ class ClientService {
 
   // Create new client
   async createClient(data: CreateClientData): Promise<ClientResponse> {
+    if (isDemoEnabled()) {
+      const demoUser = getDemoUser();
+      if (!demoUser) {
+        throw new Error('Demo session expired');
+      }
+      const client = createDemoClient(data, demoUser._id);
+      return { message: 'Demo client created successfully', client };
+    }
     try {
       const response = await api.post('/clients', data);
       return response.data;
@@ -159,6 +193,13 @@ class ClientService {
 
   // Update client
   async updateClient(id: string, data: Partial<CreateClientData>): Promise<ClientResponse> {
+    if (isDemoEnabled()) {
+      const client = updateDemoClient(id, data);
+      if (!client) {
+        throw new Error('Demo client not found');
+      }
+      return { message: 'Demo client updated successfully', client };
+    }
     try {
       const response = await api.put(`/clients/${id}`, data);
       return response.data;
@@ -169,6 +210,10 @@ class ClientService {
 
   // Delete client
   async deleteClient(id: string): Promise<{ message: string }> {
+    if (isDemoEnabled()) {
+      deleteDemoClient(id);
+      return { message: 'Demo client deleted successfully' };
+    }
     try {
       const response = await api.delete(`/clients/${id}`);
       return response.data;
@@ -179,6 +224,12 @@ class ClientService {
 
   // Get client statistics
   async getClientStats(): Promise<{ message: string; stats: ClientStats }> {
+    if (isDemoEnabled()) {
+      return {
+        message: 'Demo client stats fetched successfully',
+        stats: getDemoClientStats()
+      };
+    }
     try {
       const response = await api.get('/clients/stats');
       return response.data;
@@ -189,6 +240,10 @@ class ClientService {
 
   // Get clients with outstanding balances
   async getClientsWithOutstandingBalance(): Promise<{ message: string; clients: Client[] }> {
+    if (isDemoEnabled()) {
+      const clients = getDemoClientsRaw().filter((client) => client.outstandingBalance > 0);
+      return { message: 'Demo outstanding clients fetched successfully', clients };
+    }
     try {
       const response = await api.get('/clients/outstanding');
       return response.data;
@@ -199,6 +254,13 @@ class ClientService {
 
   // Update client financial statistics
   async updateClientStats(id: string): Promise<ClientResponse> {
+    if (isDemoEnabled()) {
+      const client = getDemoClientById(id);
+      if (!client) {
+        throw new Error('Demo client not found');
+      }
+      return { message: 'Demo client stats updated successfully', client };
+    }
     try {
       const response = await api.post(`/clients/${id}/update-stats`);
       return response.data;

@@ -9,10 +9,11 @@ interface NavbarProps {
     email: string;
     role: 'free' | 'premium';
   } | null;
+  demoMode?: boolean;
   onLogout: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
+const Navbar: React.FC<NavbarProps> = ({ user, demoMode, onLogout }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
@@ -44,6 +45,11 @@ const Navbar: React.FC<NavbarProps> = ({ user, onLogout }) => {
                 IGP
               </span>
             </Link>
+            {demoMode && (
+              <span className="ml-3 inline-flex items-center rounded-full bg-warning-100 px-2.5 py-0.5 text-xs font-semibold text-warning-700">
+                Demo Mode
+              </span>
+            )}
           </div>
 
           {/* Navigation Links */}

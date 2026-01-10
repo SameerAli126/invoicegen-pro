@@ -1,4 +1,15 @@
 import axios from 'axios';
+import {
+  createDemoInvoice,
+  deleteDemoInvoice,
+  getDemoInvoiceById,
+  getDemoInvoices,
+  getDemoInvoiceStats,
+  getDemoUser,
+  isDemoEnabled,
+  updateDemoInvoice,
+  updateDemoInvoiceStatus
+} from '../utils/demoStore';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
 
@@ -130,6 +141,14 @@ class InvoiceService {
     status?: string;
     search?: string;
   }): Promise<InvoiceListResponse> {
+    if (isDemoEnabled()) {
+      const { items, pagination } = getDemoInvoices(params);
+      return {
+        message: 'Demo invoices fetched successfully',
+        invoices: items,
+        pagination
+      };
+    }
     try {
       const response = await api.get('/invoices', { params });
       return response.data;
@@ -140,6 +159,13 @@ class InvoiceService {
 
   // Get single invoice
   async getInvoice(id: string): Promise<InvoiceResponse> {
+    if (isDemoEnabled()) {
+      const invoice = getDemoInvoiceById(id);
+      if (!invoice) {
+        throw new Error('Demo invoice not found');
+      }
+      return { message: 'Demo invoice fetched successfully', invoice };
+    }
     try {
       const response = await api.get(`/invoices/${id}`);
       return response.data;
@@ -150,6 +176,14 @@ class InvoiceService {
 
   // Create new invoice
   async createInvoice(data: CreateInvoiceData): Promise<InvoiceResponse> {
+    if (isDemoEnabled()) {
+      const demoUser = getDemoUser();
+      if (!demoUser) {
+        throw new Error('Demo session expired');
+      }
+      const invoice = createDemoInvoice(data, demoUser._id);
+      return { message: 'Demo invoice created successfully', invoice };
+    }
     try {
       const response = await api.post('/invoices', data);
       return response.data;
@@ -160,6 +194,13 @@ class InvoiceService {
 
   // Update invoice
   async updateInvoice(id: string, data: Partial<CreateInvoiceData>): Promise<InvoiceResponse> {
+    if (isDemoEnabled()) {
+      const invoice = updateDemoInvoice(id, data);
+      if (!invoice) {
+        throw new Error('Demo invoice not found');
+      }
+      return { message: 'Demo invoice updated successfully', invoice };
+    }
     try {
       const response = await api.put(`/invoices/${id}`, data);
       return response.data;
@@ -170,6 +211,10 @@ class InvoiceService {
 
   // Delete invoice
   async deleteInvoice(id: string): Promise<{ message: string }> {
+    if (isDemoEnabled()) {
+      deleteDemoInvoice(id);
+      return { message: 'Demo invoice deleted successfully' };
+    }
     try {
       const response = await api.delete(`/invoices/${id}`);
       return response.data;
@@ -180,6 +225,13 @@ class InvoiceService {
 
   // Send invoice
   async sendInvoice(id: string): Promise<InvoiceResponse> {
+    if (isDemoEnabled()) {
+      const invoice = updateDemoInvoiceStatus(id, 'sent');
+      if (!invoice) {
+        throw new Error('Demo invoice not found');
+      }
+      return { message: 'Demo invoice sent successfully', invoice };
+    }
     try {
       const response = await api.post(`/invoices/${id}/send`);
       return response.data;
@@ -190,6 +242,13 @@ class InvoiceService {
 
   // Mark invoice as paid
   async markAsPaid(id: string): Promise<InvoiceResponse> {
+    if (isDemoEnabled()) {
+      const invoice = updateDemoInvoiceStatus(id, 'paid');
+      if (!invoice) {
+        throw new Error('Demo invoice not found');
+      }
+      return { message: 'Demo invoice marked as paid successfully', invoice };
+    }
     try {
       const response = await api.post(`/invoices/${id}/mark-paid`);
       return response.data;
@@ -200,6 +259,12 @@ class InvoiceService {
 
   // Get invoice statistics
   async getInvoiceStats(): Promise<{ message: string; stats: InvoiceStats }> {
+    if (isDemoEnabled()) {
+      return {
+        message: 'Demo invoice stats fetched successfully',
+        stats: getDemoInvoiceStats()
+      };
+    }
     try {
       const response = await api.get('/invoices/stats');
       return response.data;

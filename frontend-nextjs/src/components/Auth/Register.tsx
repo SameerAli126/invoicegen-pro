@@ -6,11 +6,12 @@ import Card from '../UI/Card';
 
 interface RegisterProps {
   onRegister: (name: string, email: string, password: string) => Promise<void>;
+  onDemo?: () => void;
   loading?: boolean;
   error?: string;
 }
 
-const Register: React.FC<RegisterProps> = ({ onRegister, loading = false, error }) => {
+const Register: React.FC<RegisterProps> = ({ onRegister, onDemo, loading = false, error }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -220,6 +221,24 @@ const Register: React.FC<RegisterProps> = ({ onRegister, loading = false, error 
             >
               Create Account
             </Button>
+
+            {onDemo && (
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="lg"
+                  className="w-full"
+                  onClick={onDemo}
+                  disabled={loading}
+                >
+                  Try Demo (no backend)
+                </Button>
+                <p className="text-xs text-secondary-500 text-center">
+                  Demo data resets on refresh.
+                </p>
+              </>
+            )}
 
             <div className="text-center">
               <p className="text-sm text-secondary-600">

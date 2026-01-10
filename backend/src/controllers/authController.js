@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 
 // Generate JWT token
@@ -8,6 +9,11 @@ const generateToken = (userId) => {
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN || '7d' }
   );
+};
+
+const generateRecoveryCode = () => {
+  const code = Math.floor(100000000 + Math.random() * 900000000);
+  return String(code);
 };
 
 // Register new user
@@ -46,6 +52,10 @@ const register = async (req, res) => {
       passwordHash: password // Will be hashed by pre-save middleware
     });
 
+    const recoveryCode = generateRecoveryCode();
+    const recoverySalt = await bcrypt.genSalt(12);
+    user.recoveryCodeHash = await bcrypt.hash(recoveryCode, recoverySalt);
+
     await user.save();
 
     // Generate token
@@ -55,7 +65,8 @@ const register = async (req, res) => {
     res.status(201).json({
       message: 'User registered successfully',
       token,
-      user: user.toJSON()
+      user: user.toJSON(),
+      recoveryCode
     });
 
   } catch (error) {
@@ -274,6 +285,56 @@ const changePassword = async (req, res) => {
   }
 };
 
+// Reset password with recovery code
+const resetPassword = async (req, res) => {
+  try {
+    const { email, recoveryCode, newPassword } = req.body;
+
+    if (!email || !recoveryCode || !newPassword) {
+      return res.status(400).json({
+        message: 'Email, recovery code, and new password are required',
+        error: 'MISSING_FIELDS'
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        message: 'New password must be at least 6 characters long',
+        error: 'PASSWORD_TOO_SHORT'
+      });
+    }
+
+    const user = await User.findByEmail(email);
+    if (!user || !user.recoveryCodeHash) {
+      return res.status(401).json({
+        message: 'Invalid email or recovery code',
+        error: 'INVALID_RECOVERY_CODE'
+      });
+    }
+
+    const isCodeValid = await bcrypt.compare(String(recoveryCode).trim(), user.recoveryCodeHash);
+    if (!isCodeValid) {
+      return res.status(401).json({
+        message: 'Invalid email or recovery code',
+        error: 'INVALID_RECOVERY_CODE'
+      });
+    }
+
+    user.passwordHash = newPassword;
+    await user.save();
+
+    res.json({
+      message: 'Password reset successful'
+    });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    res.status(500).json({
+      message: 'Failed to reset password',
+      error: 'PASSWORD_RESET_ERROR'
+    });
+  }
+};
+
 // Verify token (for frontend to check if token is still valid)
 const verifyToken = async (req, res) => {
   try {
@@ -297,5 +358,6 @@ module.exports = {
   getProfile,
   updateProfile,
   changePassword,
+  resetPassword,
   verifyToken
 };
