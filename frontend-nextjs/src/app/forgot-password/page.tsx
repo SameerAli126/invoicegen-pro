@@ -55,8 +55,8 @@ function ForgotPasswordPage() {
 
     if (!formData.newPassword) {
       nextErrors.newPassword = 'New password is required';
-    } else if (formData.newPassword.length < 6) {
-      nextErrors.newPassword = 'Password must be at least 6 characters';
+    } else if (formData.newPassword.length < 8) {
+      nextErrors.newPassword = 'Password must be at least 8 characters';
     }
 
     if (!formData.confirmPassword) {

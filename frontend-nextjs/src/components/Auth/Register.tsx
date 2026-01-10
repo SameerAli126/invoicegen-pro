@@ -53,8 +53,8 @@ const Register: React.FC<RegisterProps> = ({ onRegister, onDemo, loading = false
     
     if (!formData.password) {
       errors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
+    } else if (formData.password.length < 8) {
+      errors.password = 'Password must be at least 8 characters';
     }
     
     if (!formData.confirmPassword) {
@@ -169,7 +169,7 @@ const Register: React.FC<RegisterProps> = ({ onRegister, onDemo, loading = false
               onChange={handleChange}
               error={formErrors.password}
               placeholder="Create a password"
-              helperText="Must be at least 6 characters"
+              helperText="Must be at least 8 characters"
               leftIcon={
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
